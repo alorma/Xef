@@ -14,8 +14,8 @@ public class GenericRepository<Request, Data> {
 
   public Result<Data, Throwable> execute(final Request request) {
     if (cache == null) {
-      return new Result<>(Optional.absent(),
-          Optional.of(new NullPointerException("Cache datasource cannot be null")));
+      return new Result<>(Optional.<Data>absent(),
+          Optional.<Throwable>of(new NullPointerException("Cache datasource cannot be null")));
     }
     return cache.getData(request);
   }

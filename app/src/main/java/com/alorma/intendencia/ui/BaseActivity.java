@@ -10,8 +10,7 @@ import javax.inject.Inject;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-  @Inject
-  protected LogWrapper logWrapper;
+  @Inject protected LogWrapper logWrapper;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {

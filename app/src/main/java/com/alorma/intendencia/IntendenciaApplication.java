@@ -17,7 +17,7 @@ public class IntendenciaApplication extends Application {
 
   private void initializeInjector() {
     component =
-        DaggerApplicationComponent.builder().applicationModule(new ApplicationModule()).build();
+        DaggerApplicationComponent.builder().applicationModule(new ApplicationModule(this)).build();
   }
 
   public ApplicationComponent getComponent() {
