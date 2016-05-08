@@ -1,6 +1,7 @@
 package com.alorma.intendencia.data.usecase;
 
 import com.alorma.intendencia.data.Menu;
+import com.alorma.intendencia.domain.Result;
 import com.alorma.intendencia.domain.repository.GenericRepository;
 import com.alorma.intendencia.domain.usecase.GenericUseCase;
 import java.util.List;
@@ -10,7 +11,7 @@ public class GetMenusUseCase extends GenericUseCase<Void, List<Menu>> {
     super(repository);
   }
 
-  public void getMenus() {
-
+  public Result<List<Menu>, Throwable> getMenus() {
+    return getRepository().execute(null);
   }
 }

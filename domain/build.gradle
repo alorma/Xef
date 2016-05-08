@@ -3,9 +3,7 @@ apply plugin: 'java'
 def libs = rootProject.ext.libraries;
 
 compileJava {
-    //noinspection GroovyUnusedAssignment
     sourceCompatibility = JavaVersion.VERSION_1_7
-    //noinspection GroovyUnusedAssignment
     targetCompatibility = JavaVersion.VERSION_1_7
 }
 

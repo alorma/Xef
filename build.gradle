@@ -17,6 +17,8 @@ ext {
                okhttp          : "3.2.0",
                realm           : "0.87.2",
                gallego         : "1.0.0",
+               rxjava          : "1.1.5",
+               rxandroid          : "1.2.0",
                guava           : "19.0"]
 }
 
