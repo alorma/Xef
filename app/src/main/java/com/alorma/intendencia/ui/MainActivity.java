@@ -1,8 +1,14 @@
 package com.alorma.intendencia.ui;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.alorma.intendencia.R;
-import com.alorma.intendencia.data.Menu;
+import com.alorma.intendencia.domain.Menu;
 import com.alorma.intendencia.injector.component.ApplicationComponent;
 import com.alorma.intendencia.injector.component.DaggerMenusComponent;
 import com.alorma.intendencia.injector.module.ActivityModule;
@@ -15,14 +21,20 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
 
   @Inject MenusPresenter presenter;
 
+  @Bind(R.id.recylcerView) RecyclerView recyclerView;
+  @Bind(R.id.fab) FloatingActionButton fab;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
+    ButterKnife.bind(this);
+
     logWrapper.i("IntendenciaApp", "Hello World");
     logWrapper.i("IntendenciaApp", "Presenter: " + (presenter != null));
 
+    initializeVews();
     initializePresenter();
   }
 
@@ -34,6 +46,17 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
     DaggerMenusComponent.builder().applicationComponent(component) // Main component must be set
         .activityModule(new ActivityModule(this)) // Initialize dependencies
         .menusModule(new MenusModule()).build().inject(this); // Make PerActivity module
+  }
+
+  private void initializeVews() {
+    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+    fab.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        presenter.addMenu(new Menu());
+      }
+    });
   }
 
   private void initializePresenter() {
@@ -63,6 +86,11 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
 
   @Override
   public void onError() {
+
+  }
+
+  @Override
+  public void onAddSuccess() {
 
   }
 }

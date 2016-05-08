@@ -1,8 +1,10 @@
 package com.alorma.intendencia.presenter;
 
-import com.alorma.intendencia.data.Menu;
+import android.support.annotation.NonNull;
 import com.alorma.intendencia.data.usecase.GetMenusUseCase;
+import com.alorma.intendencia.domain.Menu;
 import com.alorma.intendencia.domain.Result;
+import com.alorma.intendencia.domain.usecase.AddMenuUseCase;
 import com.alorma.intendencia.injector.PerActivity;
 import java.util.List;
 import javax.inject.Inject;
@@ -11,20 +13,47 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func0;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 @PerActivity public class MenusPresenter {
 
   private GetMenusUseCase useCase;
+  private AddMenuUseCase addMenuUseCase;
   private Callback<List<Menu>> view;
 
   @Inject
-  public MenusPresenter(GetMenusUseCase useCase) {
-    this.useCase = useCase;
+  public MenusPresenter(GetMenusUseCase getMenusUseCase, AddMenuUseCase addMenuUseCase) {
+    this.useCase = getMenusUseCase;
+    this.addMenuUseCase = addMenuUseCase;
   }
 
   public void getMenus() {
-    Observable.defer(new Func0<Observable<List<Menu>>>() {
+    processMenusObs(getMenusObs());
+  }
+
+  public void addMenu(Menu menu) {
+    Observable<List<Menu>> menusObs = getAddMenuObs(menu).observeOn(AndroidSchedulers.mainThread())
+        .doOnNext(new Action1<Boolean>() {
+          @Override
+          public void call(Boolean aBoolean) {
+            if (aBoolean) {
+              view.onAddSuccess();
+            }
+          }
+        })
+        .flatMap(new Func1<Boolean, Observable<List<Menu>>>() {
+          @Override
+          public Observable<List<Menu>> call(Boolean b) {
+            return getMenusObs();
+          }
+        });
+    processMenusObs(menusObs);
+  }
+
+  @NonNull
+  private Observable<List<Menu>> getMenusObs() {
+    return Observable.defer(new Func0<Observable<List<Menu>>>() {
       @Override
       public Observable<List<Menu>> call() {
         Result<List<Menu>, Throwable> menus = useCase.getMenus();
@@ -35,8 +64,27 @@ import rx.schedulers.Schedulers;
         }
         return Observable.empty();
       }
-    })
-        .subscribeOn(Schedulers.newThread())
+    });
+  }
+
+  @NonNull
+  private Observable<Boolean> getAddMenuObs(final Menu menu) {
+    return Observable.defer(new Func0<Observable<Boolean>>() {
+      @Override
+      public Observable<Boolean> call() {
+        Result<Boolean, Throwable> result = addMenuUseCase.addMenu(menu);
+        if (result.getSuccess().isPresent()) {
+          return Observable.just(result.getSuccess().get());
+        } else if (result.getFailure().isPresent()) {
+          return Observable.error(result.getFailure().get());
+        }
+        return Observable.empty();
+      }
+    });
+  }
+
+  private void processMenusObs(Observable<List<Menu>> menusObs) {
+    menusObs.subscribeOn(Schedulers.newThread())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<List<Menu>>() {
           @Override
@@ -72,5 +120,7 @@ import rx.schedulers.Schedulers;
     void onLoaded();
 
     void onError();
+
+    void onAddSuccess();
   }
 }

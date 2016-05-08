@@ -1,17 +1,18 @@
 package com.alorma.intendencia.data.usecase;
 
-import com.alorma.intendencia.data.Menu;
+import com.alorma.intendencia.domain.Menu;
 import com.alorma.intendencia.domain.Result;
-import com.alorma.intendencia.domain.repository.GenericRepository;
-import com.alorma.intendencia.domain.usecase.GenericUseCase;
+import com.alorma.intendencia.domain.repository.MenusRepository;
 import java.util.List;
 
-public class GetMenusUseCase extends GenericUseCase<Void, List<Menu>> {
-  public GetMenusUseCase(GenericRepository<Void, List<Menu>> repository) {
-    super(repository);
+public class GetMenusUseCase {
+  private MenusRepository repository;
+
+  public GetMenusUseCase(MenusRepository repository) {
+    this.repository = repository;
   }
 
   public Result<List<Menu>, Throwable> getMenus() {
-    return getRepository().execute(null);
+    return repository.getMenus();
   }
 }

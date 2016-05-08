@@ -8,7 +8,8 @@ import dagger.Component;
 
 @PerActivity @Component(dependencies = ApplicationComponent.class, modules = {
     ActivityModule.class, MenusModule.class
-}) public interface MenusComponent extends ActivityComponent {
+})
+public interface MenusComponent extends ActivityComponent {
 
   void inject(MainActivity mainActivity);
 }
