@@ -11,24 +11,43 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MenusDataSourceImpl implements MenusDataSource {
+public class RealmMenusDataSourceImpl implements MenusDataSource {
 
-  private final Realm realm;
+  private RealmConfiguration realmConfiguration;
 
-  public MenusDataSourceImpl(RealmConfiguration realmConfiguration) {
-    Realm.setDefaultConfiguration(realmConfiguration);
-    realm = Realm.getDefaultInstance();
+  public RealmMenusDataSourceImpl(final RealmConfiguration realmConfiguration) {
+    this.realmConfiguration = realmConfiguration;
+  }
+
+  private Realm getRealmInstance() {
+    return Realm.getInstance(realmConfiguration);
   }
 
   @Override
   public Result<List<Menu>, Throwable> getMenus() {
-    RealmResults<MenuVo> menuVos = Realm.getDefaultInstance().allObjects(MenuVo.class);
+    final Realm realm = getRealmInstance();
+    RealmResults<MenuVo> menuVos = realm.where(MenuVo.class).findAll();
     List<Menu> menus = new ArrayList<>();
     for (MenuVo menuVo : menuVos) {
-      mapMenuVo(menuVo);
+      menus.add(mapMenuVo(menuVo));
     }
+    realm.close();
     Optional<List<Menu>> success = Optional.of(menus);
     return new Result<>(success, Optional.<Throwable>absent());
+  }
+
+  @Override
+  public Result<Boolean, Throwable> addMenu(Menu menu) {
+    final Realm realm = getRealmInstance();
+    final MenuVo menuVo = mapMenu(menu);
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        realm.copyToRealmOrUpdate(menuVo);
+      }
+    });
+    realm.close();
+    return new Result<>(Optional.of(true), Optional.<Throwable>absent());
   }
 
   private Menu mapMenuVo(MenuVo menuVo) {
@@ -43,11 +62,5 @@ public class MenusDataSourceImpl implements MenusDataSource {
     menuVo.setKey(UUID.randomUUID().toString());
     menuVo.setName(menu.getName());
     return menuVo;
-  }
-
-  @Override
-  public Result<Boolean, Throwable> addMenu(Menu menu) {
-    MenuVo menuVo = realm.copyToRealm(mapMenu(menu));
-    return new Result<>(Optional.of(menuVo.isValid()), Optional.<Throwable>absent());
   }
 }

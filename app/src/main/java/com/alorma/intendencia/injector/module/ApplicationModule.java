@@ -1,6 +1,6 @@
 package com.alorma.intendencia.injector.module;
 
-import com.alorma.intendencia.data.datasource.MenusDataSourceImpl;
+import com.alorma.intendencia.data.datasource.RealmMenusDataSourceImpl;
 import com.alorma.intendencia.data.repository.MenusRepositoryImpl;
 import com.alorma.intendencia.domain.datasource.MenusDataSource;
 import com.alorma.intendencia.domain.repository.MenusRepository;
@@ -14,7 +14,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.realm.RealmConfiguration;
-import javax.inject.Singleton;
 
 @Module public class ApplicationModule {
 
@@ -45,7 +44,7 @@ import javax.inject.Singleton;
   @Provides
   @Singleton
   MenusDataSource providesMenusCache(RealmConfiguration realmConfiguration) {
-    return new MenusDataSourceImpl(realmConfiguration);
+    return new RealmMenusDataSourceImpl(realmConfiguration);
   }
 
   @Provides

@@ -54,7 +54,9 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        presenter.addMenu(new Menu());
+        Menu menu = new Menu();
+        menu.setName("A");
+        presenter.addMenu(menu);
       }
     });
   }

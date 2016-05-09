@@ -1,17 +1,13 @@
 package com.alorma.intendencia.presenter;
 
+import android.support.annotation.NonNull;
 import com.alorma.intendencia.domain.Menu;
 import com.alorma.intendencia.domain.Result;
 import com.alorma.intendencia.domain.usecase.AddMenuUseCase;
 import com.alorma.intendencia.domain.usecase.GetMenusUseCase;
 import com.alorma.intendencia.injector.PerActivity;
-
-import android.support.annotation.NonNull;
-
 import java.util.List;
-
 import javax.inject.Inject;
-
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
@@ -37,21 +33,19 @@ import rx.schedulers.Schedulers;
   }
 
   public void addMenu(Menu menu) {
-    Observable<List<Menu>> menusObs = getAddMenuObs(menu).observeOn(AndroidSchedulers.mainThread())
-        .doOnNext(new Action1<Boolean>() {
-          @Override
-          public void call(Boolean aBoolean) {
-            if (aBoolean) {
-              view.onAddSuccess();
-            }
-          }
-        })
-        .flatMap(new Func1<Boolean, Observable<List<Menu>>>() {
-          @Override
-          public Observable<List<Menu>> call(Boolean b) {
-            return getMenusObs();
-          }
-        });
+    Observable<List<Menu>> menusObs = getAddMenuObs(menu).doOnNext(new Action1<Boolean>() {
+      @Override
+      public void call(Boolean aBoolean) {
+        if (aBoolean) {
+          view.onAddSuccess();
+        }
+      }
+    }).flatMap(new Func1<Boolean, Observable<List<Menu>>>() {
+      @Override
+      public Observable<List<Menu>> call(Boolean b) {
+        return getMenusObs();
+      }
+    });
     processMenusObs(menusObs);
   }
 
@@ -96,7 +90,7 @@ import rx.schedulers.Schedulers;
   }
 
   private void processMenusObs(Observable<List<Menu>> menusObs) {
-    menusObs.subscribeOn(Schedulers.newThread())
+    menusObs.subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<List<Menu>>() {
           @Override
@@ -111,6 +105,7 @@ import rx.schedulers.Schedulers;
           @Override
           public void call(Throwable throwable) {
             view.onError();
+            throwable.printStackTrace();
           }
         }, new Action0() {
           @Override
