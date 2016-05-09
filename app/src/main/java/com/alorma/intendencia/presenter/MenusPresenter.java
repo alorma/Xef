@@ -1,13 +1,17 @@
 package com.alorma.intendencia.presenter;
 
-import android.support.annotation.NonNull;
-import com.alorma.intendencia.data.usecase.GetMenusUseCase;
 import com.alorma.intendencia.domain.Menu;
 import com.alorma.intendencia.domain.Result;
 import com.alorma.intendencia.domain.usecase.AddMenuUseCase;
+import com.alorma.intendencia.domain.usecase.GetMenusUseCase;
 import com.alorma.intendencia.injector.PerActivity;
+
+import android.support.annotation.NonNull;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;

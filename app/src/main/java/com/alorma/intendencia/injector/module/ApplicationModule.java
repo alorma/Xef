@@ -1,15 +1,18 @@
 package com.alorma.intendencia.injector.module;
 
-import android.content.Context;
 import com.alorma.intendencia.data.datasource.MenusDataSourceImpl;
 import com.alorma.intendencia.data.repository.MenusRepositoryImpl;
 import com.alorma.intendencia.domain.datasource.MenusDataSource;
 import com.alorma.intendencia.domain.repository.MenusRepository;
 import com.alorma.intendencia.log.LogWrapper;
 import com.alorma.intendencia.log.impl.AndroidLogWrapper;
+
+import android.content.Context;
+
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
-import javax.inject.Singleton;
 
 @Module public class ApplicationModule {
 
@@ -33,7 +36,7 @@ import javax.inject.Singleton;
 
   @Provides
   @Singleton
-  MenusDataSource providesMenusCache(Context context) {
+  MenusDataSource providesMenusCache() {
     return new MenusDataSourceImpl();
   }
 
