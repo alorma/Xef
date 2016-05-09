@@ -57,14 +57,18 @@ import rx.schedulers.Schedulers;
 
   @NonNull
   private Observable<List<Menu>> getMenusObs() {
-    return Observable.defer(new Func0<Observable<List<Menu>>>() {
+    return Observable.fromCallable(new Func0<Result<List<Menu>, Throwable>>() {
       @Override
-      public Observable<List<Menu>> call() {
-        Result<List<Menu>, Throwable> menus = useCase.getMenus();
-        if (menus.getSuccess().isPresent()) {
-          return Observable.just(menus.getSuccess().get());
-        } else if (menus.getFailure().isPresent()) {
-          return Observable.error(menus.getFailure().get());
+      public Result<List<Menu>, Throwable> call() {
+        return useCase.getMenus();
+      }
+    }).flatMap(new Func1<Result<List<Menu>, Throwable>, Observable<List<Menu>>>() {
+      @Override
+      public Observable<List<Menu>> call(Result<List<Menu>, Throwable> result) {
+        if (result.getSuccess().isPresent()) {
+          return Observable.just(result.getSuccess().get());
+        } else if (result.getFailure().isPresent()) {
+          return Observable.error(result.getFailure().get());
         }
         return Observable.empty();
       }
@@ -73,10 +77,14 @@ import rx.schedulers.Schedulers;
 
   @NonNull
   private Observable<Boolean> getAddMenuObs(final Menu menu) {
-    return Observable.defer(new Func0<Observable<Boolean>>() {
+    return Observable.fromCallable(new Func0<Result<Boolean, Throwable>>() {
       @Override
-      public Observable<Boolean> call() {
-        Result<Boolean, Throwable> result = addMenuUseCase.addMenu(menu);
+      public Result<Boolean, Throwable> call() {
+        return addMenuUseCase.addMenu(menu);
+      }
+    }).flatMap(new Func1<Result<Boolean, Throwable>, Observable<Boolean>>() {
+      @Override
+      public Observable<Boolean> call(Result<Boolean, Throwable> result) {
         if (result.getSuccess().isPresent()) {
           return Observable.just(result.getSuccess().get());
         } else if (result.getFailure().isPresent()) {

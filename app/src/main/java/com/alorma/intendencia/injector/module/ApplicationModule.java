@@ -13,6 +13,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.realm.RealmConfiguration;
+import javax.inject.Singleton;
 
 @Module public class ApplicationModule {
 
@@ -36,8 +38,14 @@ import dagger.Provides;
 
   @Provides
   @Singleton
-  MenusDataSource providesMenusCache() {
-    return new MenusDataSourceImpl();
+  RealmConfiguration providesRealmConfiguration(Context context) {
+    return new RealmConfiguration.Builder(context).name("intendencia.realm").build();
+  }
+
+  @Provides
+  @Singleton
+  MenusDataSource providesMenusCache(RealmConfiguration realmConfiguration) {
+    return new MenusDataSourceImpl(realmConfiguration);
   }
 
   @Provides
