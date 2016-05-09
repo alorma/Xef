@@ -2,6 +2,7 @@ package com.alorma.intendencia.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,7 +15,9 @@ import com.alorma.intendencia.injector.component.DaggerMenusComponent;
 import com.alorma.intendencia.injector.module.ActivityModule;
 import com.alorma.intendencia.injector.module.MenusModule;
 import com.alorma.intendencia.presenter.MenusPresenter;
+import com.alorma.intendencia.ui.adapter.MenusAdapter;
 import java.util.List;
+import java.util.UUID;
 import javax.inject.Inject;
 
 public class MainActivity extends BaseActivity implements MenusPresenter.Callback<List<Menu>> {
@@ -23,6 +26,8 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
 
   @Bind(R.id.recylcerView) RecyclerView recyclerView;
   @Bind(R.id.fab) FloatingActionButton fab;
+  private MenusAdapter adapter;
+  private Snackbar snackbar;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +35,6 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
     setContentView(R.layout.activity_main);
 
     ButterKnife.bind(this);
-
-    logWrapper.i("IntendenciaApp", "Hello World");
-    logWrapper.i("IntendenciaApp", "Presenter: " + (presenter != null));
 
     initializeVews();
     initializePresenter();
@@ -51,11 +53,15 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
   private void initializeVews() {
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+    adapter = new MenusAdapter(getLayoutInflater());
+
+    recyclerView.setAdapter(adapter);
+
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         Menu menu = new Menu();
-        menu.setName("A");
+        menu.setName(UUID.randomUUID().toString());
         presenter.addMenu(menu);
       }
     });
@@ -73,7 +79,8 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
 
   @Override
   public void onSuccess(List<Menu> menus) {
-
+    adapter.clear();
+    adapter.addAll(menus);
   }
 
   @Override
@@ -93,6 +100,11 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
 
   @Override
   public void onAddSuccess() {
-
+    if (snackbar == null) {
+      snackbar = Snackbar.make(recyclerView, "Menu añadido", Snackbar.LENGTH_SHORT);
+    }
+    if (!snackbar.isShown()) {
+      snackbar.show();
+    }
   }
 }

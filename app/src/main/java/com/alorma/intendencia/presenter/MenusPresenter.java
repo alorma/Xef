@@ -33,19 +33,21 @@ import rx.schedulers.Schedulers;
   }
 
   public void addMenu(Menu menu) {
-    Observable<List<Menu>> menusObs = getAddMenuObs(menu).doOnNext(new Action1<Boolean>() {
-      @Override
-      public void call(Boolean aBoolean) {
-        if (aBoolean) {
-          view.onAddSuccess();
-        }
-      }
-    }).flatMap(new Func1<Boolean, Observable<List<Menu>>>() {
-      @Override
-      public Observable<List<Menu>> call(Boolean b) {
-        return getMenusObs();
-      }
-    });
+    Observable<List<Menu>> menusObs = getAddMenuObs(menu)
+        .doOnNext(new Action1<Boolean>() {
+          @Override
+          public void call(Boolean aBoolean) {
+            if (aBoolean) {
+              view.onAddSuccess();
+            }
+          }
+        })
+        .flatMap(new Func1<Boolean, Observable<List<Menu>>>() {
+          @Override
+          public Observable<List<Menu>> call(Boolean b) {
+            return getMenusObs();
+          }
+        });
     processMenusObs(menusObs);
   }
 
