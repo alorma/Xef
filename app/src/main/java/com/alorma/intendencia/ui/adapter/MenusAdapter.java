@@ -30,6 +30,15 @@ public class MenusAdapter extends RecyclerArrayAdapter<Menu, MenusAdapter.Holder
     public Holder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
+
+      itemView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          if (getCallback() != null) {
+            getCallback().onItemSelected(getItem(getAdapterPosition()));
+          }
+        }
+      });
     }
   }
 }

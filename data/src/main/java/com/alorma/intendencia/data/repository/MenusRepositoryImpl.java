@@ -15,8 +15,28 @@ public class MenusRepositoryImpl implements MenusRepository {
   }
 
   @Override
+  public Result<Boolean, Throwable> clear() {
+    return cache.clear();
+  }
+
+  @Override
+  public Result<Boolean, Throwable> remove(String id) {
+    return cache.remove(id);
+  }
+
+  @Override
+  public Result<Boolean, Throwable> remove(Menu menu) {
+    return cache.remove(menu);
+  }
+
+  @Override
   public Result<List<Menu>, Throwable> getMenus() {
     return cache.getMenus();
+  }
+
+  @Override
+  public Result<Menu, Throwable> getMenu(String id) {
+    return cache.getMenu(id);
   }
 
   @Override

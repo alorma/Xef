@@ -1,10 +1,12 @@
-package com.alorma.intendencia.ui;
+package com.alorma.intendencia.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -16,16 +18,20 @@ import com.alorma.intendencia.injector.module.ActivityModule;
 import com.alorma.intendencia.injector.module.MenusModule;
 import com.alorma.intendencia.presenter.MenusPresenter;
 import com.alorma.intendencia.ui.adapter.MenusAdapter;
+import com.alorma.intendencia.ui.adapter.RecyclerArrayAdapter;
 import java.util.List;
 import java.util.UUID;
 import javax.inject.Inject;
 
-public class MainActivity extends BaseActivity implements MenusPresenter.Callback<List<Menu>> {
+public class MainActivity extends BaseActivity
+    implements MenusPresenter.Callback<List<Menu>>, RecyclerArrayAdapter.ItemCallback<Menu> {
 
   @Inject MenusPresenter presenter;
 
-  @Bind(R.id.recylcerView) RecyclerView recyclerView;
+  @Bind(R.id.toolbar) Toolbar toolbar;
+  @Bind(R.id.recyclerView) RecyclerView recyclerView;
   @Bind(R.id.fab) FloatingActionButton fab;
+
   private MenusAdapter adapter;
   private Snackbar snackbar;
 
@@ -36,7 +42,12 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
 
     ButterKnife.bind(this);
 
-    initializeVews();
+    if (toolbar != null) {
+      setSupportActionBar(toolbar);
+    }
+
+
+    initializeViews();
     initializePresenter();
   }
 
@@ -50,10 +61,11 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
         .menusModule(new MenusModule()).build().inject(this); // Make PerActivity module
   }
 
-  private void initializeVews() {
+  private void initializeViews() {
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     adapter = new MenusAdapter(getLayoutInflater());
+    adapter.setCallback(this);
 
     recyclerView.setAdapter(adapter);
 
@@ -106,5 +118,11 @@ public class MainActivity extends BaseActivity implements MenusPresenter.Callbac
     if (!snackbar.isShown()) {
       snackbar.show();
     }
+  }
+
+  @Override
+  public void onItemSelected(Menu item) {
+    Intent intent = new MenuDetailActivityIntentBuilder(item.getId()).build(this);
+    startActivity(intent);
   }
 }

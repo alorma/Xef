@@ -58,4 +58,11 @@ dependencies {
   compile "io.reactivex:rxandroid:${libs.rxandroid}"
 
   provided "org.glassfish:javax.annotation:${libs.javax_annotation}"
+
+  compile "se.emilsjolander:intentbuilder-api:${libs.intentBuidler}"
+  apt "se.emilsjolander:intentbuilder-compiler:${libs.intentBuidler}"
+
+  compile("com.mikepenz:materialize:${libs.materialize}") {
+    transitive = true
+  }
 }

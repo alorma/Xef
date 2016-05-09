@@ -24,6 +24,37 @@ public class RealmMenusDataSourceImpl implements MenusDataSource {
   }
 
   @Override
+  public Result<Boolean, Throwable> clear() {
+    final Realm realm = getRealmInstance();
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        realm.clear(MenuVo.class);
+      }
+    });
+    realm.close();
+    return new Result<>(Optional.of(true), Optional.<Throwable>absent());
+  }
+
+  @Override
+  public Result<Boolean, Throwable> remove(final String id) {
+    final Realm realm = getRealmInstance();
+    realm.executeTransaction(new Realm.Transaction() {
+      @Override
+      public void execute(Realm realm) {
+        realm.where(MenuVo.class).equalTo("key", id).findFirst().removeFromRealm();
+      }
+    });
+    realm.close();
+    return new Result<>(Optional.of(true), Optional.<Throwable>absent());
+  }
+
+  @Override
+  public Result<Boolean, Throwable> remove(Menu menu) {
+    return remove(menu.getId());
+  }
+
+  @Override
   public Result<List<Menu>, Throwable> getMenus() {
     final Realm realm = getRealmInstance();
     RealmResults<MenuVo> menuVos = realm.where(MenuVo.class).findAll();
@@ -34,6 +65,19 @@ public class RealmMenusDataSourceImpl implements MenusDataSource {
     realm.close();
     Optional<List<Menu>> success = Optional.of(menus);
     return new Result<>(success, Optional.<Throwable>absent());
+  }
+
+  @Override
+  public Result<Menu, Throwable> getMenu(String id) {
+    final Realm realm = getRealmInstance();
+
+    MenuVo menuVo = realm.where(MenuVo.class).equalTo("key", id).findFirst();
+
+    Menu menu = mapMenuVo(menuVo);
+
+    realm.close();
+
+    return new Result<>(Optional.of(menu), Optional.<Throwable>absent());
   }
 
   @Override

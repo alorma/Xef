@@ -2,14 +2,14 @@ package com.alorma.intendencia.injector.component;
 
 import com.alorma.intendencia.injector.PerActivity;
 import com.alorma.intendencia.injector.module.ActivityModule;
-import com.alorma.intendencia.injector.module.MenusModule;
-import com.alorma.intendencia.ui.activity.MainActivity;
+import com.alorma.intendencia.injector.module.MenuDetailModule;
+import com.alorma.intendencia.ui.activity.MenuDetailActivity;
 import dagger.Component;
 
 @PerActivity @Component(dependencies = ApplicationComponent.class, modules = {
-    ActivityModule.class, MenusModule.class
+    ActivityModule.class, MenuDetailModule.class
 })
-public interface MenusComponent extends ActivityComponent {
+public interface MenuDetailComponent {
 
-  void inject(MainActivity mainActivity);
+  void inject(MenuDetailActivity menuDetailActivity);
 }

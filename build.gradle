@@ -18,7 +18,9 @@ ext {
                realm           : "0.87.2",
                gallego         : "1.0.0",
                rxjava          : "1.1.5",
-               rxandroid          : "1.2.0",
+               rxandroid       : "1.2.0",
+               intentBuidler   : "0.14.0",
+               materialize     : "0.8.8@aar",
                guava           : "19.0"]
 }
 

@@ -1,3 +1,5 @@
 <resources>
   <string name="app_name">Intendencia</string>
+  <string name="menus_title">Menus</string>
+  <string name="menu_detail">Detalle</string>
 </resources>
